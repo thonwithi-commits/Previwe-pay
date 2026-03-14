@@ -22,6 +22,8 @@
         .promo-img, .qr-img-fit { object-fit: cover; width: 100%; height: 100%; }
         .custom-scroll::-webkit-scrollbar { width: 4px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .mode-btn { transform: scale(1); transition: transform 0.2s; }
+        .mode-btn:active { transform: scale(0.95); }
     </style>
 </head>
 <body class="bg-slate-900 text-white min-h-screen">
@@ -30,22 +32,29 @@
     <div id="mode-selector" class="fixed inset-0 z-50 bg-slate-900 flex items-center justify-center p-6">
         <div class="max-w-md w-full text-center space-y-10">
             <div class="space-y-3">
-                <h1 class="text-5xl font-extrabold text-emerald-400 tracking-tighter uppercase italic">EEL RESTAURANT</h1>
-                <p class="text-slate-400 font-light uppercase tracking-widest text-sm">Smart Payment & Display System</p>
+                <h1 class="text-6xl font-black text-emerald-400 tracking-tighter uppercase italic drop-shadow-lg">EEL RESTAURANT</h1>
+                <p class="text-slate-400 font-medium uppercase tracking-[0.3em] text-xs">Smart Payment & Display System</p>
             </div>
+            
             <div class="grid grid-cols-1 gap-5">
-                <button onclick="selectMode('customer')" class="flex flex-col items-center p-8 bg-slate-800 border-2 border-slate-700 rounded-[2.5rem] hover:border-emerald-500 hover:bg-slate-800/50 transition-all group">
+                <button onclick="selectMode('customer')" class="mode-btn flex flex-col items-center p-8 bg-slate-800/50 border-2 border-slate-700 rounded-[2.5rem] hover:border-emerald-500 hover:bg-slate-800 transition-all group">
                     <span class="text-5xl mb-4 group-hover:scale-110 transition-transform">📺</span>
                     <span class="text-2xl font-bold">จอสำหรับลูกค้า</span>
-                    <span class="text-xs text-slate-500 mt-2 uppercase tracking-wide">Customer Display Mode</span>
+                    <span class="text-[10px] text-slate-500 mt-2 uppercase tracking-widest font-black">Customer Display Mode</span>
                 </button>
-                <button onclick="selectMode('staff')" class="flex flex-col items-center p-8 bg-slate-800 border-2 border-slate-700 rounded-[2.5rem] hover:border-blue-500 hover:bg-slate-800/50 transition-all group">
+                <button onclick="selectMode('staff')" class="mode-btn flex flex-col items-center p-8 bg-slate-800/50 border-2 border-slate-700 rounded-[2.5rem] hover:border-blue-500 hover:bg-slate-800 transition-all group">
                     <span class="text-5xl mb-4 group-hover:scale-110 transition-transform">📱</span>
                     <span class="text-2xl font-bold">จอสำหรับพนักงาน</span>
-                    <span class="text-xs text-slate-500 mt-2 uppercase tracking-wide">Staff Controller Mode</span>
+                    <span class="text-[10px] text-slate-500 mt-2 uppercase tracking-widest font-black">Staff Controller Mode</span>
                 </button>
             </div>
-            <div id="status-msg" class="text-xs text-slate-600 font-bold uppercase animate-pulse">กำลังเตรียมความพร้อมของระบบ...</div>
+            
+            <div id="status-container" class="space-y-2">
+                <div id="status-msg" class="text-[10px] text-slate-500 font-black uppercase tracking-widest">ระบบกำลังเริ่มต้น...</div>
+                <div id="config-alert" class="hidden text-[10px] text-yellow-500 font-bold bg-yellow-500/10 p-4 rounded-xl">
+                    ⚠️ ยังไม่ได้ใส่ Firebase Config (ระบบรีโมทจะไม่ทำงานบน GitHub)
+                </div>
+            </div>
         </div>
     </div>
 
@@ -83,7 +92,7 @@
         <!-- ฝั่งขวา: QR Payment -->
         <div class="flex-1 bg-white flex flex-col items-center justify-center p-12 relative text-slate-900">
             <div id="qr-content" class="w-full text-center space-y-12">
-                <!-- QR Content จะถูกอัปเดตที่นี่ -->
+                <!-- QR Content -->
             </div>
             <div class="absolute bottom-8 right-8 text-[10px] text-slate-200 font-bold tracking-widest uppercase">
                 Device: <span id="device-id">---</span>
@@ -161,12 +170,12 @@
             <div class="space-y-4">
                 <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest px-2">🖼️ สลับรูปโปรโมชั่น</h3>
                 <div class="flex items-center justify-between bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-200">
-                    <button onclick="switchPromo(-1)" class="w-14 h-14 bg-slate-100 hover:bg-slate-200 rounded-full text-2xl active:scale-90 transition-all flex items-center justify-center">‹</button>
+                    <button onclick="switchPromo(-1)" class="w-14 h-14 bg-slate-100 hover:bg-slate-200 rounded-full text-2xl active:scale-90 transition-all flex items-center justify-center font-bold">‹</button>
                     <div class="text-center">
                         <span id="staff-promo-index" class="text-4xl font-black italic text-slate-800">1</span>
                         <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Active Slide</p>
                     </div>
-                    <button onclick="switchPromo(1)" class="w-14 h-14 bg-slate-100 hover:bg-slate-200 rounded-full text-2xl active:scale-90 transition-all flex items-center justify-center">›</button>
+                    <button onclick="switchPromo(1)" class="w-14 h-14 bg-slate-100 hover:bg-slate-200 rounded-full text-2xl active:scale-90 transition-all flex items-center justify-center font-bold">›</button>
                 </div>
             </div>
         </div>
@@ -231,15 +240,40 @@
             { title: "COLLECT POINTS", desc: "ทานครบ 1,000.- รับสิทธิ์ลุ้นรับรางวัลพิเศษ", color: "bg-blue-700", img: "" }
         ];
 
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'eel-smart-display';
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'eel-v1';
 
         async function init() {
             try {
-                const config = JSON.parse(__firebase_config);
+                let config;
+                
+                // ตรวจสอบว่าอยู่ใน Canvas หรือไม่
+                if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                    config = JSON.parse(__firebase_config);
+                } else {
+                    // --- สำหรับใช้บน GitHub Pages: ให้สร้างโปรเจกต์ Firebase แล้วนำ Config มาวางที่นี่ ---
+                    // หากยังไม่ได้ใส่ Config จริง ระบบจะข้ามการเชื่อมต่อ Firebase เพื่อไม่ให้ค้างที่หน้าเลือกโหมด
+                    config = {
+                        apiKey: "YOUR_API_KEY",
+                        authDomain: "YOUR_PROJECT.firebaseapp.com",
+                        projectId: "YOUR_PROJECT_ID",
+                        storageBucket: "YOUR_PROJECT.appspot.com",
+                        messagingSenderId: "YOUR_SENDER_ID",
+                        appId: "YOUR_APP_ID"
+                    };
+                    
+                    if (config.apiKey === "YOUR_API_KEY") {
+                        document.getElementById('config-alert').classList.remove('hidden');
+                        document.getElementById('status-msg').innerText = "รันในโหมดจำลอง (Offline)";
+                        refreshUI();
+                        return;
+                    }
+                }
+
                 const app = initializeApp(config);
                 auth = getAuth(app);
                 db = getFirestore(app);
 
+                // Firebase Auth
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
                 } else {
@@ -251,11 +285,13 @@
             } catch (err) {
                 console.error(err);
                 document.getElementById('status-msg').innerText = "ERROR: เชื่อมต่อฐานข้อมูลไม่ได้";
-                document.getElementById('status-msg').className = "text-red-500 font-bold text-xs animate-pulse";
+                document.getElementById('status-msg').className = "text-red-500 font-black text-[10px] animate-pulse";
             }
         }
 
         function setupSync() {
+            if (!db) return;
+            // 1. ดึงข้อมูลโปรโมชั่น
             const promoRef = doc(db, 'artifacts', appId, 'public', 'data', 'promotionsConfig');
             onSnapshot(promoRef, (snap) => {
                 if (snap.exists()) {
@@ -266,6 +302,7 @@
                 }
             });
 
+            // 2. ดึงข้อมูลสถานะจอ (Real-time)
             const stateRef = doc(db, 'artifacts', appId, 'public', 'data', 'displayState');
             onSnapshot(stateRef, (snap) => {
                 if (snap.exists()) {
@@ -279,6 +316,12 @@
         }
 
         window.updateRemote = async (updates) => {
+            if (!db) {
+                // โหมด Offline: อัปเดตเฉพาะหน้าตัวเองเพื่อจำลองการทำงาน
+                currentState = { ...currentState, ...updates };
+                refreshUI();
+                return;
+            }
             const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'displayState');
             try { await updateDoc(docRef, updates); } catch (e) {}
         };
@@ -290,28 +333,38 @@
 
         function refreshUI() {
             const qrArea = document.getElementById('qr-content');
+            if (!qrArea) return;
             const promo = localPromotions[currentState.currentPromo] || localPromotions[0];
             
             // --- อัปเดตฝั่งจอลูกค้า ---
-            document.getElementById('promo-section').className = `flex-[1.8] ${promo.color} flex flex-col items-center justify-center text-white p-20 transition-all-500 bg-gradient-animate relative overflow-hidden`;
-            document.getElementById('display-promo-title').innerText = promo.title;
-            document.getElementById('display-promo-desc').innerText = promo.desc;
+            const promoSec = document.getElementById('promo-section');
+            if (promoSec) promoSec.className = `flex-[1.8] ${promo.color} flex flex-col items-center justify-center text-white p-20 transition-all-500 bg-gradient-animate relative overflow-hidden`;
+            
+            const titleEl = document.getElementById('display-promo-title');
+            const descEl = document.getElementById('display-promo-desc');
+            if (titleEl) titleEl.innerText = promo.title;
+            if (descEl) descEl.innerText = promo.desc;
             
             const displayImg = document.getElementById('display-promo-img');
             const placeholder = document.getElementById('promo-placeholder');
-            if (promo.img) {
-                displayImg.src = promo.img;
-                displayImg.classList.remove('hidden');
-                placeholder.classList.add('hidden');
-            } else {
-                displayImg.classList.add('hidden');
-                placeholder.classList.remove('hidden');
+            if (displayImg && placeholder) {
+                if (promo.img) {
+                    displayImg.src = promo.img;
+                    displayImg.classList.remove('hidden');
+                    placeholder.classList.add('hidden');
+                } else {
+                    displayImg.classList.add('hidden');
+                    placeholder.classList.remove('hidden');
+                }
             }
             
-            const dotHTML = localPromotions.map((_, i) => 
-                `<div class="h-1.5 rounded-full transition-all duration-500 ${i === currentState.currentPromo ? 'w-12 bg-white' : 'w-2 bg-white/30'}"></div>`
-            ).join('');
-            document.getElementById('display-dots').innerHTML = dotHTML;
+            const dotContainer = document.getElementById('display-dots');
+            if (dotContainer) {
+                const dotHTML = localPromotions.map((_, i) => 
+                    `<div class="h-1.5 rounded-full transition-all duration-500 ${i === currentState.currentPromo ? 'w-12 bg-white' : 'w-2 bg-white/30'}"></div>`
+                ).join('');
+                dotContainer.innerHTML = dotHTML;
+            }
 
             // --- อัปเดตฝั่ง QR ---
             if (currentState.showThanks) {
@@ -329,7 +382,7 @@
                             <p class="text-2xl font-bold uppercase tracking-widest ${isIbank ? 'text-emerald-600' : 'text-blue-600'}">${isIbank ? 'ธนาคารอิสลาม (iBank)' : 'PromptPay / ทั่วไป'}</p>
                         </div>
                         <div class="relative inline-block bg-white p-6 rounded-[3rem] shadow-2xl border border-slate-50 overflow-hidden">
-                            <img src="${qrImgSrc}" class="w-80 h-80 object-contain rounded-[1.5rem]" alt="Payment QR" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=ErrorPath&color=ff0000'">
+                            <img src="${qrImgSrc}" class="w-80 h-80 object-contain rounded-[2rem]" alt="Payment QR" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=MissingImage&color=ff0000'">
                         </div>
                         <div class="space-y-4">
                             <p class="bg-slate-50 px-8 py-3 rounded-full inline-block font-bold text-slate-800 border border-slate-100 shadow-sm">ชื่อบัญชี: <span class="text-emerald-700">ร้านอาหารอีล</span></p>
@@ -339,24 +392,34 @@
             }
 
             // --- อัปเดตฝั่งรีโมทพนักงาน ---
-            document.getElementById('staff-status-promo').innerText = promo.title;
-            document.getElementById('staff-status-qr').innerText = `QR: ${currentState.qrType.toUpperCase()}`;
-            document.getElementById('staff-promo-index').innerText = currentState.currentPromo + 1;
-            document.getElementById('device-id').innerText = auth.currentUser?.uid.slice(0, 6);
+            const staffPromo = document.getElementById('staff-status-promo');
+            const staffQR = document.getElementById('staff-status-qr');
+            if (staffPromo) staffPromo.innerText = promo.title;
+            if (staffQR) staffQR.innerText = `QR: ${currentState.qrType.toUpperCase()}`;
+            
+            const staffIdx = document.getElementById('staff-promo-index');
+            if (staffIdx) staffIdx.innerText = currentState.currentPromo + 1;
+            
+            const devId = document.getElementById('device-id');
+            if (devId) devId.innerText = auth?.currentUser?.uid.slice(0, 6) || "Offline";
             
             const staffImg = document.getElementById('staff-status-img');
             const staffIcon = document.getElementById('staff-status-icon');
-            if (promo.img) {
-                staffImg.src = promo.img;
-                staffImg.classList.remove('hidden');
-                staffIcon.classList.add('hidden');
-            } else {
-                staffImg.classList.add('hidden');
-                staffIcon.classList.remove('hidden');
+            if (staffImg && staffIcon) {
+                if (promo.img) {
+                    staffImg.src = promo.img;
+                    staffImg.classList.remove('hidden');
+                    staffIcon.classList.add('hidden');
+                } else {
+                    staffImg.classList.add('hidden');
+                    staffIcon.classList.remove('hidden');
+                }
             }
 
-            document.getElementById('btn-ibank').className = `bg-white p-5 rounded-2xl border-2 shadow-sm flex items-center justify-between active:scale-95 transition-all ${currentState.qrType === 'ibank' ? 'border-emerald-500 ring-4 ring-emerald-500/10' : 'border-transparent'}`;
-            document.getElementById('btn-general').className = `bg-white p-5 rounded-2xl border-2 shadow-sm flex items-center justify-between active:scale-95 transition-all ${currentState.qrType === 'general' ? 'border-blue-500 ring-4 ring-blue-500/10' : 'border-transparent'}`;
+            const bI = document.getElementById('btn-ibank');
+            const bG = document.getElementById('btn-general');
+            if (bI) bI.className = `bg-white p-5 rounded-2xl border-2 shadow-sm flex items-center justify-between active:scale-95 transition-all ${currentState.qrType === 'ibank' ? 'border-emerald-500 ring-4 ring-emerald-500/10' : 'border-transparent'}`;
+            if (bG) bG.className = `bg-white p-5 rounded-2xl border-2 shadow-sm flex items-center justify-between active:scale-95 transition-all ${currentState.qrType === 'general' ? 'border-blue-500 ring-4 ring-blue-500/10' : 'border-transparent'}`;
         }
 
         window.toggleSettings = () => {
@@ -408,6 +471,16 @@
 
             const iData = document.getElementById('set-ibank-data').value;
             const gData = document.getElementById('set-general-data').value;
+
+            if (!db) {
+                // โหมด Offline: อัปเดตเฉพาะ Local
+                localPromotions = updatedItems;
+                currentState.ibankData = iData;
+                currentState.generalData = gData;
+                refreshUI();
+                toggleSettings();
+                return;
+            }
 
             try {
                 const promoRef = doc(db, 'artifacts', appId, 'public', 'data', 'promotionsConfig');
