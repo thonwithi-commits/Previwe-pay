@@ -19,17 +19,15 @@
             100% { background-position: 0% 50%; }
         }
         .transition-all-500 { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-        .promo-img, .qr-img-fit { object-fit: cover; width: 100%; height: 100%; }
+        .promo-img { object-fit: cover; width: 100%; height: 100%; }
         .custom-scroll::-webkit-scrollbar { width: 4px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .mode-btn { transform: scale(1); transition: transform 0.2s; }
-        .mode-btn:active { transform: scale(0.95); }
     </style>
 </head>
 <body class="bg-slate-900 text-white min-h-screen">
 
     <!-- ส่วนเลือกโหมดการใช้งาน -->
-    <div id="mode-selector" class="fixed inset-0 z-50 bg-slate-900 flex items-center justify-center p-6">
+    <div id="mode-selector" class="fixed inset-0 z-50 bg-slate-900 flex items-center justify-center p-6 text-white">
         <div class="max-w-md w-full text-center space-y-10">
             <div class="space-y-3">
                 <h1 class="text-6xl font-black text-emerald-400 tracking-tighter uppercase italic drop-shadow-lg">EEL RESTAURANT</h1>
@@ -37,29 +35,24 @@
             </div>
             
             <div class="grid grid-cols-1 gap-5">
-                <button onclick="selectMode('customer')" class="mode-btn flex flex-col items-center p-8 bg-slate-800/50 border-2 border-slate-700 rounded-[2.5rem] hover:border-emerald-500 hover:bg-slate-800 transition-all group">
+                <button onclick="selectMode('customer')" class="flex flex-col items-center p-8 bg-slate-800/50 border-2 border-slate-700 rounded-[2.5rem] hover:border-emerald-500 hover:bg-slate-800 transition-all group">
                     <span class="text-5xl mb-4 group-hover:scale-110 transition-transform">📺</span>
                     <span class="text-2xl font-bold">จอสำหรับลูกค้า</span>
                     <span class="text-[10px] text-slate-500 mt-2 uppercase tracking-widest font-black">Customer Display Mode</span>
                 </button>
-                <button onclick="selectMode('staff')" class="mode-btn flex flex-col items-center p-8 bg-slate-800/50 border-2 border-slate-700 rounded-[2.5rem] hover:border-blue-500 hover:bg-slate-800 transition-all group">
+                <button onclick="selectMode('staff')" class="flex flex-col items-center p-8 bg-slate-800/50 border-2 border-slate-700 rounded-[2.5rem] hover:border-blue-500 hover:bg-slate-800 transition-all group">
                     <span class="text-5xl mb-4 group-hover:scale-110 transition-transform">📱</span>
                     <span class="text-2xl font-bold">จอสำหรับพนักงาน</span>
                     <span class="text-[10px] text-slate-500 mt-2 uppercase tracking-widest font-black">Staff Controller Mode</span>
                 </button>
             </div>
             
-            <div id="status-container" class="space-y-2">
-                <div id="status-msg" class="text-[10px] text-slate-500 font-black uppercase tracking-widest">ระบบกำลังเริ่มต้น...</div>
-                <div id="config-alert" class="hidden text-[10px] text-yellow-500 font-bold bg-yellow-500/10 p-4 rounded-xl">
-                    ⚠️ ยังไม่ได้ใส่ Firebase Config (ระบบรีโมทจะไม่ทำงานบน GitHub)
-                </div>
-            </div>
+            <div id="status-msg" class="text-[10px] text-slate-600 font-black uppercase tracking-widest">ระบบกำลังเชื่อมต่อ...</div>
         </div>
     </div>
 
     <!-- หน้าจอลูกค้า (Customer View) -->
-    <div id="view-customer" class="hidden h-screen w-screen flex flex-row overflow-hidden">
+    <div id="view-customer" class="hidden h-screen w-screen flex flex-row overflow-hidden bg-white">
         <!-- ฝั่งซ้าย: สไลด์โปรโมชั่น -->
         <div id="promo-section" class="flex-[1.8] relative flex flex-col items-center justify-center p-20 transition-all-500 bg-gradient-animate overflow-hidden">
             <div class="absolute top-12 left-12 flex items-center gap-4">
@@ -73,27 +66,23 @@
             </div>
             
             <div class="text-center space-y-12 z-10">
-                <div id="promo-image-container" class="relative group">
-                    <div class="absolute -inset-2 bg-white/20 rounded-[3rem] blur-xl group-hover:blur-2xl transition-all"></div>
-                    <div id="promo-img-wrapper" class="relative w-[550px] h-[380px] bg-black/20 backdrop-blur-md rounded-[2.5rem] border-4 border-white/30 flex items-center justify-center shadow-2xl overflow-hidden animate-in fade-in duration-700">
+                <div class="relative group">
+                    <div id="promo-img-wrapper" class="relative w-[550px] h-[380px] bg-black/20 backdrop-blur-md rounded-[2.5rem] border-4 border-white/30 flex items-center justify-center shadow-2xl overflow-hidden">
                         <div id="promo-placeholder" class="text-white/20 text-9xl">🥘</div>
                         <img id="display-promo-img" src="" class="hidden promo-img" alt="Promotion">
                     </div>
                 </div>
-                <div class="space-y-4 animate-in slide-in-from-bottom-4 duration-700">
-                    <h3 id="display-promo-title" class="text-7xl font-extrabold uppercase tracking-tighter drop-shadow-lg text-white leading-tight">---</h3>
-                    <p id="display-promo-desc" class="text-3xl font-medium opacity-90 max-w-xl mx-auto drop-shadow-md text-white">---</p>
+                <div class="space-y-4">
+                    <h3 id="display-promo-title" class="text-7xl font-extrabold uppercase tracking-tighter text-white drop-shadow-lg leading-tight">---</h3>
+                    <p id="display-promo-desc" class="text-3xl font-medium opacity-90 max-w-xl mx-auto text-white drop-shadow-md">---</p>
                 </div>
             </div>
-            
             <div class="absolute bottom-12 left-12 flex gap-3" id="display-dots"></div>
         </div>
 
         <!-- ฝั่งขวา: QR Payment -->
-        <div class="flex-1 bg-white flex flex-col items-center justify-center p-12 relative text-slate-900">
-            <div id="qr-content" class="w-full text-center space-y-12">
-                <!-- QR Content -->
-            </div>
+        <div class="flex-1 bg-white flex flex-col items-center justify-center p-12 relative text-slate-900 border-l-4 border-slate-100">
+            <div id="qr-content" class="w-full text-center space-y-12"></div>
             <div class="absolute bottom-8 right-8 text-[10px] text-slate-200 font-bold tracking-widest uppercase">
                 Device: <span id="device-id">---</span>
             </div>
@@ -114,14 +103,13 @@
         </header>
 
         <div class="max-w-md mx-auto p-4 space-y-8">
-            <!-- สถานะปัจจุบัน -->
             <div class="bg-slate-900 p-6 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden">
                 <div class="relative z-10">
                     <p class="text-[10px] font-bold text-emerald-500 mb-4 uppercase tracking-[0.2em] flex items-center gap-2">
                         <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span> Live Status
                     </p>
                     <div class="flex items-center gap-5">
-                        <div id="staff-status-color" class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shadow-lg transition-all-500 overflow-hidden bg-slate-800">
+                        <div id="staff-status-color" class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shadow-lg bg-slate-800 overflow-hidden">
                              <img id="staff-status-img" src="" class="hidden promo-img" alt="Current">
                              <span id="staff-status-icon">🖼️</span>
                         </div>
@@ -133,7 +121,6 @@
                 </div>
             </div>
 
-            <!-- หมวดหมู่ QR -->
             <div class="space-y-4">
                 <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest px-2">💳 สลับช่องทางชำระเงิน</h3>
                 <div class="grid grid-cols-1 gap-3">
@@ -142,7 +129,7 @@
                             <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center font-black italic text-xl">i</div>
                             <div>
                                 <p class="font-bold text-slate-800">ธนาคารอิสลาม (iBank)</p>
-                                <p class="text-xs text-slate-500">สำหรับธุรกรรมมุสลิม</p>
+                                <p class="text-xs text-slate-500">ไฟล์: qr01.jpg</p>
                             </div>
                         </div>
                     </button>
@@ -151,7 +138,7 @@
                             <div class="w-12 h-12 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center font-black italic text-xl">P</div>
                             <div>
                                 <p class="font-bold text-slate-800">พร้อมเพย์ / ทั่วไป</p>
-                                <p class="text-xs text-slate-500">พร้อมเพย์ทุกธนาคาร</p>
+                                <p class="text-xs text-slate-500">ไฟล์: qr02.jpg</p>
                             </div>
                         </div>
                     </button>
@@ -166,7 +153,6 @@
                 </div>
             </div>
 
-            <!-- หมวดหมู่ สไลด์ -->
             <div class="space-y-4">
                 <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest px-2">🖼️ สลับรูปโปรโมชั่น</h3>
                 <div class="flex items-center justify-between bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-200">
@@ -180,38 +166,26 @@
             </div>
         </div>
 
-        <!-- หน้าตั้งค่า (Settings Modal) -->
         <div id="settings-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end justify-center">
-            <div class="bg-white w-full max-w-md rounded-t-[3.5rem] p-8 space-y-6 shadow-2xl animate-in slide-in-from-bottom duration-300 max-h-[92vh] overflow-y-auto custom-scroll">
+            <div class="bg-white w-full max-w-md rounded-t-[3.5rem] p-8 space-y-6 shadow-2xl max-h-[92vh] overflow-y-auto custom-scroll text-slate-900">
                 <div class="flex justify-between items-center sticky top-0 bg-white py-2 z-10">
-                    <h3 class="text-2xl font-black text-slate-800">🛠️ ตั้งค่าข้อมูลร้าน</h3>
+                    <h3 class="text-2xl font-black">🛠️ ตั้งค่าข้อมูลร้าน</h3>
                     <button onclick="toggleSettings()" class="text-3xl text-slate-300 active:scale-90 transition-transform">&times;</button>
                 </div>
-                
-                <div class="space-y-8">
-                    <div class="border-b pb-2">
-                        <h4 class="font-bold text-emerald-600 uppercase text-xs tracking-widest">แก้ไขโปรโมชั่นและรูปภาพ</h4>
-                    </div>
-                    <div id="promo-editor" class="space-y-6">
-                        <!-- จะถูก Render ด้วย JS -->
-                    </div>
-
-                    <div class="pt-4 border-t space-y-6">
-                        <h4 class="font-bold text-blue-600 uppercase text-xs tracking-widest text-blue-600">ตั้งค่ารูปภาพ QR Code (GitHub)</h4>
-                        <div class="space-y-4">
-                            <div>
-                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-wider">ชื่อไฟล์/ลิ้งค์ QR iBank</label>
-                                <input id="set-ibank-data" type="text" class="w-full bg-slate-100 p-4 rounded-2xl mt-1 text-sm outline-none focus:ring-2 focus:ring-emerald-500 font-bold" placeholder="เช่น qr01.jpg">
-                            </div>
-                            <div>
-                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-wider">ชื่อไฟล์/ลิ้งค์ QR ทั่วไป</label>
-                                <input id="set-general-data" type="text" class="w-full bg-slate-100 p-4 rounded-2xl mt-1 text-sm outline-none focus:ring-2 focus:ring-blue-500 font-bold" placeholder="เช่น qr02.jpg">
-                            </div>
-                            <p class="text-[10px] text-slate-400 italic">* หากคุณใส่แค่ชื่อไฟล์ ระบบจะหาไฟล์จากโฟลเดอร์เดียวกันบน GitHub</p>
+                <div id="promo-editor" class="space-y-6"></div>
+                <div class="pt-4 border-t space-y-6 text-left">
+                    <h4 class="font-bold text-blue-600 uppercase text-xs tracking-widest">ตั้งค่ารูปภาพ QR Code (GitHub)</h4>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-wider">ชื่อไฟล์ QR iBank</label>
+                            <input id="set-ibank-data" type="text" class="w-full bg-slate-100 p-4 rounded-2xl mt-1 text-sm outline-none font-bold">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-wider">ชื่อไฟล์ QR ทั่วไป</label>
+                            <input id="set-general-data" type="text" class="w-full bg-slate-100 p-4 rounded-2xl mt-1 text-sm outline-none font-bold">
                         </div>
                     </div>
                 </div>
-
                 <div class="pt-6">
                     <button onclick="saveSettings()" class="w-full bg-slate-900 text-white py-5 rounded-[2rem] font-bold text-lg shadow-xl active:scale-95 transition-all">บันทึกข้อมูลทั้งหมด</button>
                 </div>
@@ -225,13 +199,21 @@
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, onSnapshot, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- Config & Initial Data ---
+        // ==========================================
+        // *** FIREBASE CONFIGURATION (USER DATA) ***
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDNTPLeh2ilBDHFoRpHcONRmOovQuBkGCc",
+            authDomain: "eel-shop.firebaseapp.com",
+            projectId: "eel-shop",
+            storageBucket: "eel-shop.firebasestorage.app",
+            messagingSenderId: "679381508667",
+            appId: "1:679381508667:web:df597559e64390fe18721e",
+            measurementId: "G-6H57RR573N"
+        };
+
         let db, auth, currentState = { 
-            qrType: 'none', 
-            currentPromo: 0, 
-            showThanks: false,
-            ibankData: 'qr01.jpg',
-            generalData: 'qr02.jpg'
+            qrType: 'none', currentPromo: 0, showThanks: false, ibankData: 'qr01.jpg', generalData: 'qr02.jpg'
         };
 
         let localPromotions = [
@@ -244,36 +226,10 @@
 
         async function init() {
             try {
-                let config;
-                
-                // ตรวจสอบว่าอยู่ใน Canvas หรือไม่
-                if (typeof __firebase_config !== 'undefined' && __firebase_config) {
-                    config = JSON.parse(__firebase_config);
-                } else {
-                    // --- สำหรับใช้บน GitHub Pages: ให้สร้างโปรเจกต์ Firebase แล้วนำ Config มาวางที่นี่ ---
-                    // หากยังไม่ได้ใส่ Config จริง ระบบจะข้ามการเชื่อมต่อ Firebase เพื่อไม่ให้ค้างที่หน้าเลือกโหมด
-                    config = {
-                        apiKey: "YOUR_API_KEY",
-                        authDomain: "YOUR_PROJECT.firebaseapp.com",
-                        projectId: "YOUR_PROJECT_ID",
-                        storageBucket: "YOUR_PROJECT.appspot.com",
-                        messagingSenderId: "YOUR_SENDER_ID",
-                        appId: "YOUR_APP_ID"
-                    };
-                    
-                    if (config.apiKey === "YOUR_API_KEY") {
-                        document.getElementById('config-alert').classList.remove('hidden');
-                        document.getElementById('status-msg').innerText = "รันในโหมดจำลอง (Offline)";
-                        refreshUI();
-                        return;
-                    }
-                }
-
-                const app = initializeApp(config);
+                const app = initializeApp(firebaseConfig);
                 auth = getAuth(app);
                 db = getFirestore(app);
 
-                // Firebase Auth
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
                 } else {
@@ -284,46 +240,28 @@
                 setupSync();
             } catch (err) {
                 console.error(err);
-                document.getElementById('status-msg').innerText = "ERROR: เชื่อมต่อฐานข้อมูลไม่ได้";
+                document.getElementById('status-msg').innerText = "ERROR: ตรวจสอบ Firebase Setup";
                 document.getElementById('status-msg').className = "text-red-500 font-black text-[10px] animate-pulse";
+                refreshUI();
             }
         }
 
         function setupSync() {
             if (!db) return;
-            // 1. ดึงข้อมูลโปรโมชั่น
-            const promoRef = doc(db, 'artifacts', appId, 'public', 'data', 'promotionsConfig');
-            onSnapshot(promoRef, (snap) => {
-                if (snap.exists()) {
-                    localPromotions = snap.data().items || localPromotions;
-                    refreshUI();
-                } else {
-                    setDoc(promoRef, { items: localPromotions });
-                }
+            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'promotionsConfig'), (snap) => {
+                if (snap.exists()) { localPromotions = snap.data().items || localPromotions; refreshUI(); }
+                else { setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'promotionsConfig'), { items: localPromotions }); }
             });
 
-            // 2. ดึงข้อมูลสถานะจอ (Real-time)
-            const stateRef = doc(db, 'artifacts', appId, 'public', 'data', 'displayState');
-            onSnapshot(stateRef, (snap) => {
-                if (snap.exists()) {
-                    currentState = { ...currentState, ...snap.data() };
-                    refreshUI();
-                    syncInputs();
-                } else {
-                    setDoc(stateRef, currentState);
-                }
+            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'displayState'), (snap) => {
+                if (snap.exists()) { currentState = { ...currentState, ...snap.data() }; refreshUI(); syncInputs(); }
+                else { setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'displayState'), currentState); }
             });
         }
 
         window.updateRemote = async (updates) => {
-            if (!db) {
-                // โหมด Offline: อัปเดตเฉพาะหน้าตัวเองเพื่อจำลองการทำงาน
-                currentState = { ...currentState, ...updates };
-                refreshUI();
-                return;
-            }
-            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'displayState');
-            try { await updateDoc(docRef, updates); } catch (e) {}
+            if (!db) { currentState = { ...currentState, ...updates }; refreshUI(); return; }
+            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'displayState'), updates); } catch (e) {}
         };
 
         window.switchPromo = (dir) => {
@@ -336,53 +274,33 @@
             if (!qrArea) return;
             const promo = localPromotions[currentState.currentPromo] || localPromotions[0];
             
-            // --- อัปเดตฝั่งจอลูกค้า ---
-            const promoSec = document.getElementById('promo-section');
-            if (promoSec) promoSec.className = `flex-[1.8] ${promo.color} flex flex-col items-center justify-center text-white p-20 transition-all-500 bg-gradient-animate relative overflow-hidden`;
+            document.getElementById('promo-section').className = `flex-[1.8] ${promo.color} flex flex-col items-center justify-center text-white p-20 transition-all-500 bg-gradient-animate relative overflow-hidden`;
+            document.getElementById('display-promo-title').innerText = promo.title;
+            document.getElementById('display-promo-desc').innerText = promo.desc;
             
-            const titleEl = document.getElementById('display-promo-title');
-            const descEl = document.getElementById('display-promo-desc');
-            if (titleEl) titleEl.innerText = promo.title;
-            if (descEl) descEl.innerText = promo.desc;
+            const dImg = document.getElementById('display-promo-img');
+            const dPlc = document.getElementById('promo-placeholder');
+            if (promo.img) { dImg.src = promo.img; dImg.classList.remove('hidden'); dPlc.classList.add('hidden'); }
+            else { dImg.classList.add('hidden'); dPlc.classList.remove('hidden'); }
             
-            const displayImg = document.getElementById('display-promo-img');
-            const placeholder = document.getElementById('promo-placeholder');
-            if (displayImg && placeholder) {
-                if (promo.img) {
-                    displayImg.src = promo.img;
-                    displayImg.classList.remove('hidden');
-                    placeholder.classList.add('hidden');
-                } else {
-                    displayImg.classList.add('hidden');
-                    placeholder.classList.remove('hidden');
-                }
-            }
-            
-            const dotContainer = document.getElementById('display-dots');
-            if (dotContainer) {
-                const dotHTML = localPromotions.map((_, i) => 
-                    `<div class="h-1.5 rounded-full transition-all duration-500 ${i === currentState.currentPromo ? 'w-12 bg-white' : 'w-2 bg-white/30'}"></div>`
-                ).join('');
-                dotContainer.innerHTML = dotHTML;
-            }
+            document.getElementById('display-dots').innerHTML = localPromotions.map((_, i) => 
+                `<div class="h-1.5 rounded-full transition-all duration-500 ${i === currentState.currentPromo ? 'w-12 bg-white' : 'w-2 bg-white/30'}"></div>`
+            ).join('');
 
-            // --- อัปเดตฝั่ง QR ---
             if (currentState.showThanks) {
                 qrArea.innerHTML = `<div class="animate-in zoom-in duration-500 text-center space-y-8"><div class="text-9xl">✨</div><h3 class="text-5xl font-black text-slate-900 uppercase leading-none tracking-tighter">THANK YOU!</h3><p class="text-2xl font-medium text-slate-400">ขอให้มีความสุขกับมื้ออาหารนะคะ</p></div>`;
             } else if (currentState.qrType === 'none') {
                 qrArea.innerHTML = `<div class="opacity-10 space-y-8 animate-in fade-in duration-1000"><div class="text-9xl">🛒</div><h3 class="text-5xl font-black text-slate-900 uppercase leading-none tracking-tighter">SCAN HERE</h3><p class="text-xl text-slate-300 font-medium italic">กรุณาแจ้งพนักงานเพื่อรับ QR</p></div>`;
             } else {
                 const isIbank = currentState.qrType === 'ibank';
-                const qrImgSrc = isIbank ? currentState.ibankData : currentState.generalData;
-                
                 qrArea.innerHTML = `
                     <div class="animate-in zoom-in-95 duration-500 space-y-12">
                         <div class="space-y-4">
                             <h3 class="text-6xl font-black text-slate-900 uppercase leading-none tracking-tighter">SCAN NOW</h3>
-                            <p class="text-2xl font-bold uppercase tracking-widest ${isIbank ? 'text-emerald-600' : 'text-blue-600'}">${isIbank ? 'ธนาคารอิสลาม (iBank)' : 'PromptPay / ทั่วไป'}</p>
+                            <p class="text-2xl font-bold uppercase tracking-widest ${isIbank ? 'text-emerald-600' : 'text-blue-600'}">${isIbank ? 'ธนาคารอิสลาม (iBank)' : 'พร้อมเพย์ / ทั่วไป'}</p>
                         </div>
                         <div class="relative inline-block bg-white p-6 rounded-[3rem] shadow-2xl border border-slate-50 overflow-hidden">
-                            <img src="${qrImgSrc}" class="w-80 h-80 object-contain rounded-[2rem]" alt="Payment QR" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=MissingImage&color=ff0000'">
+                            <img src="${isIbank ? currentState.ibankData : currentState.generalData}" class="w-80 h-80 object-contain rounded-[2rem]" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=MissingImage&color=ff0000'">
                         </div>
                         <div class="space-y-4">
                             <p class="bg-slate-50 px-8 py-3 rounded-full inline-block font-bold text-slate-800 border border-slate-100 shadow-sm">ชื่อบัญชี: <span class="text-emerald-700">ร้านอาหารอีล</span></p>
@@ -391,74 +309,40 @@
                     </div>`;
             }
 
-            // --- อัปเดตฝั่งรีโมทพนักงาน ---
-            const staffPromo = document.getElementById('staff-status-promo');
-            const staffQR = document.getElementById('staff-status-qr');
-            if (staffPromo) staffPromo.innerText = promo.title;
-            if (staffQR) staffQR.innerText = `QR: ${currentState.qrType.toUpperCase()}`;
+            document.getElementById('staff-status-promo').innerText = promo.title;
+            document.getElementById('staff-status-qr').innerText = `QR: ${currentState.qrType.toUpperCase()}`;
+            document.getElementById('staff-promo-index').innerText = currentState.currentPromo + 1;
+            document.getElementById('device-id').innerText = auth?.currentUser?.uid.slice(0, 6) || "Offline";
             
-            const staffIdx = document.getElementById('staff-promo-index');
-            if (staffIdx) staffIdx.innerText = currentState.currentPromo + 1;
-            
-            const devId = document.getElementById('device-id');
-            if (devId) devId.innerText = auth?.currentUser?.uid.slice(0, 6) || "Offline";
-            
-            const staffImg = document.getElementById('staff-status-img');
-            const staffIcon = document.getElementById('staff-status-icon');
-            if (staffImg && staffIcon) {
-                if (promo.img) {
-                    staffImg.src = promo.img;
-                    staffImg.classList.remove('hidden');
-                    staffIcon.classList.add('hidden');
-                } else {
-                    staffImg.classList.add('hidden');
-                    staffIcon.classList.remove('hidden');
-                }
-            }
+            const sImg = document.getElementById('staff-status-img');
+            const sIco = document.getElementById('staff-status-icon');
+            if (promo.img) { sImg.src = promo.img; sImg.classList.remove('hidden'); sIco.classList.add('hidden'); }
+            else { sImg.classList.add('hidden'); sIco.classList.remove('hidden'); }
 
-            const bI = document.getElementById('btn-ibank');
-            const bG = document.getElementById('btn-general');
-            if (bI) bI.className = `bg-white p-5 rounded-2xl border-2 shadow-sm flex items-center justify-between active:scale-95 transition-all ${currentState.qrType === 'ibank' ? 'border-emerald-500 ring-4 ring-emerald-500/10' : 'border-transparent'}`;
-            if (bG) bG.className = `bg-white p-5 rounded-2xl border-2 shadow-sm flex items-center justify-between active:scale-95 transition-all ${currentState.qrType === 'general' ? 'border-blue-500 ring-4 ring-blue-500/10' : 'border-transparent'}`;
+            document.getElementById('btn-ibank').className = `bg-white p-5 rounded-2xl border-2 shadow-sm flex items-center justify-between active:scale-95 transition-all ${currentState.qrType === 'ibank' ? 'border-emerald-500 ring-4 ring-emerald-500/10' : 'border-transparent'}`;
+            document.getElementById('btn-general').className = `bg-white p-5 rounded-2xl border-2 shadow-sm flex items-center justify-between active:scale-95 transition-all ${currentState.qrType === 'general' ? 'border-blue-500 ring-4 ring-blue-500/10' : 'border-transparent'}`;
         }
 
         window.toggleSettings = () => {
-            const modal = document.getElementById('settings-modal');
-            modal.classList.toggle('hidden');
-            if (!modal.classList.contains('hidden')) renderPromoEditor();
+            document.getElementById('settings-modal').classList.toggle('hidden');
+            if (!document.getElementById('settings-modal').classList.contains('hidden')) renderPromoEditor();
         };
 
         function renderPromoEditor() {
-            const container = document.getElementById('promo-editor');
-            container.innerHTML = localPromotions.map((p, i) => `
-                <div class="p-6 bg-slate-50 rounded-[2.5rem] border border-slate-100 space-y-4 shadow-sm">
-                    <div class="flex justify-between items-center">
-                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">สไลด์ที่ ${i+1}</span>
-                        <div class="w-5 h-5 rounded-full ${p.color} shadow-inner"></div>
-                    </div>
+            document.getElementById('promo-editor').innerHTML = localPromotions.map((p, i) => `
+                <div class="p-6 bg-slate-50 rounded-[2.5rem] border border-slate-100 space-y-4 text-left">
+                    <div class="flex justify-between items-center"><span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">สไลด์ที่ ${i+1}</span></div>
                     <div class="space-y-3">
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-bold text-slate-500 uppercase">ชื่อโปรโมชั่น</label>
-                            <input id="edit-title-${i}" type="text" value="${p.title}" class="w-full bg-white p-3.5 rounded-2xl border-0 text-sm font-bold shadow-sm outline-none focus:ring-2 focus:ring-slate-300">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-bold text-slate-500 uppercase">รายละเอียด</label>
-                            <textarea id="edit-desc-${i}" class="w-full bg-white p-3.5 rounded-2xl border-0 text-sm shadow-sm outline-none focus:ring-2 focus:ring-slate-300 h-20">${p.desc}</textarea>
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-bold text-slate-500 uppercase">Link รูปภาพอาหาร (URL)</label>
-                            <input id="edit-img-${i}" type="text" value="${p.img}" class="w-full bg-white p-3.5 rounded-2xl border-0 text-[10px] shadow-sm outline-none focus:ring-2 focus:ring-slate-300 font-mono" placeholder="https://...">
-                        </div>
+                        <input id="edit-title-${i}" type="text" value="${p.title}" class="w-full bg-white p-3.5 rounded-2xl border text-sm font-bold">
+                        <textarea id="edit-desc-${i}" class="w-full bg-white p-3.5 rounded-2xl border text-sm h-20">${p.desc}</textarea>
+                        <input id="edit-img-${i}" type="text" value="${p.img}" class="w-full bg-white p-3.5 rounded-2xl border text-[10px]" placeholder="Link รูปภาพอาหาร">
                     </div>
-                </div>
-            `).join('');
+                </div>`).join('');
         }
 
         function syncInputs() {
-            const iInput = document.getElementById('set-ibank-data');
-            const gInput = document.getElementById('set-general-data');
-            if (iInput) iInput.value = currentState.ibankData;
-            if (gInput) gInput.value = currentState.generalData;
+            if (document.getElementById('set-ibank-data')) document.getElementById('set-ibank-data').value = currentState.ibankData;
+            if (document.getElementById('set-general-data')) document.getElementById('set-general-data').value = currentState.generalData;
         }
 
         window.saveSettings = async () => {
@@ -468,29 +352,14 @@
                 img: document.getElementById(`edit-img-${i}`).value,
                 color: localPromotions[i].color
             }));
-
             const iData = document.getElementById('set-ibank-data').value;
             const gData = document.getElementById('set-general-data').value;
 
-            if (!db) {
-                // โหมด Offline: อัปเดตเฉพาะ Local
-                localPromotions = updatedItems;
-                currentState.ibankData = iData;
-                currentState.generalData = gData;
-                refreshUI();
-                toggleSettings();
-                return;
-            }
-
             try {
-                const promoRef = doc(db, 'artifacts', appId, 'public', 'data', 'promotionsConfig');
-                await setDoc(promoRef, { items: updatedItems });
-
-                const stateRef = doc(db, 'artifacts', appId, 'public', 'data', 'displayState');
-                await updateDoc(stateRef, { ibankData: iData, generalData: gData });
-                
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'promotionsConfig'), { items: updatedItems });
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'displayState'), { ibankData: iData, generalData: gData });
                 toggleSettings();
-            } catch (err) { alert("บันทึกข้อมูลไม่สำเร็จ"); }
+            } catch (err) { alert("บันทึกไม่สำเร็จ"); }
         };
 
         window.selectMode = (mode) => {
