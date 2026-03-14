@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eel Restaurant - Smart Display</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Kanit', sans-serif; overflow: hidden; }
+        .bg-gradient-animate {
+            background: linear-gradient(-45deg, #065f46, #047857, #064e3b, #065f46);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .qr-card-active {
+            transform: scale(1.05);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .transition-all-500 { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+    </style>
+</head>
+<body class="bg-slate-900 text-white min-h-screen">
+
+    <!-- ส่วนเลือกโหมดการใช้งาน -->
+    <div id="mode-selector" class="fixed inset-0 z-50 bg-slate-900 flex items-center justify-center p-6">
+        <div class="max-w-md w-full text-center space-y-10">
+            <div class="space-y-3">
+                <h1 class="text-5xl font-extrabold text-emerald-400 tracking-tighter uppercase italic">EEL RESTAURANT</h1>
+                <p class="text-slate-400 font-light uppercase tracking-widest text-sm">Smart Payment & Display System</p>
+            </div>
+            <div class="grid grid-cols-1 gap-5">
+                <button onclick="selectMode('customer')" class="flex flex-col items-center p-8 bg-slate-800 border-2 border-slate-700 rounded-[2rem] hover:border-emerald-500 hover:bg-slate-800/50 transition-all group">
+                    <span class="text-5xl mb-4 group-hover:scale-110 transition-transform">📺</span>
+                    <span class="text-2xl font-bold">จอสำหรับลูกค้า</span>
+                    <span class="text-xs text-slate-500 mt-2 uppercase tracking-wide">Customer Display Mode</span>
+                </button>
+                <button onclick="selectMode('staff')" class="flex flex-col items-center p-8 bg-slate-800 border-2 border-slate-700 rounded-[2rem] hover:border-blue-500 hover:bg-slate-800/50 transition-all group">
+                    <span class="text-5xl mb-4 group-hover:scale-110 transition-transform">📱</span>
+                    <span class="text-2xl font-bold">จอสำหรับพนักงาน</span>
+                    <span class="text-xs text-slate-500 mt-2 uppercase tracking-wide">Staff Controller Mode</span>
+                </button>
+            </div>
+            <div id="status-msg" class="text-xs text-slate-600 font-bold uppercase animate-pulse">กำลังเตรียมความพร้อมของระบบ...</div>
+        </div>
+    </div>
+
+    <!-- หน้าจอลูกค้า (Customer View) -->
+    <div id="view-customer" class="hidden h-screen w-screen flex flex-row">
+        <!-- ฝั่งซ้าย: สไลด์โปรโมชั่น -->
+        <div id="promo-section" class="flex-[1.8] relative flex flex-col items-center justify-center p-20 transition-all-500 overflow-hidden">
+            <div class="absolute top-12 left-12 flex items-center gap-4">
+                <div class="w-16 h-16 bg-white flex items-center justify-center rounded-2xl shadow-2xl">
+                    <span class="text-4xl font-black text-emerald-900 italic">E</span>
+                </div>
+                <div class="text-left text-white drop-shadow-md">
+                    <h2 class="text-3xl font-black uppercase tracking-tighter leading-none">Eel Restaurant</h2>
+                    <p class="text-xs font-bold tracking-[0.3em] uppercase opacity-70">Authentic Taste</p>
+                </div>
+            </div>
+            
+            <div class="text-center space-y-12 z-10 animate-in fade-in duration-700">
+                <div id="promo-image-container" class="relative group">
+                    <div class="absolute -inset-2 bg-white/20 rounded-[3rem] blur-xl group-hover:blur-2xl transition-all"></div>
+                    <div class="relative w-[500px] h-[350px] bg-black/20 backdrop-blur-md rounded-[2.5rem] border-4 border-white/30 flex items-center justify-center shadow-2xl overflow-hidden">
+                        <!-- ในอนาคตใส่รูปที่นี่ -->
+                        <div class="text-white/20 text-9xl">🥘</div>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <h3 id="display-promo-title" class="text-7xl font-extrabold uppercase tracking-tighter drop-shadow-lg">---</h3>
+                    <p id="display-promo-desc" class="text-3xl font-medium opacity-90 max-w-xl mx-auto drop-shadow-md">---</p>
+                </div>
+            </div>
+            
+            <!-- ป้ายตกแต่ง -->
+            <div class="absolute bottom-12 left-12 flex gap-3" id="display-dots"></div>
+        </div>
+
+        <!-- ฝั่งขวา: QR Payment -->
+        <div class="flex-1 bg-white flex flex-col items-center justify-center p-12 relative">
+            <div id="qr-content" class="w-full text-center space-y-12">
+                <!-- เนื้อหาจะถูก Update ด้วย JavaScript -->
+            </div>
+            <div class="absolute bottom-8 right-8 text-[10px] text-slate-300 font-bold tracking-widest uppercase">
+                Device: <span id="device-id">---</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- หน้าจอพนักงาน (Staff View) -->
+    <div id="view-staff" class="hidden min-h-screen bg-slate-50 text-slate-900 overflow-y-auto pb-10">
+        <header class="bg-white border-b px-6 py-4 sticky top-0 z-20 flex justify-between items-center shadow-sm">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center text-white font-bold">E</div>
+                <h2 class="font-black text-xl tracking-tight uppercase text-slate-800">Control Panel</h2>
+            </div>
+            <button onclick="location.reload()" class="p-2 bg-slate-100 rounded-full text-xl active:bg-slate-200 transition-colors">🔄</button>
+        </header>
+
+        <div class="max-w-md mx-auto p-4 space-y-8">
+            <!-- สถานะปัจจุบัน -->
+            <div class="bg-slate-900 p-6 rounded-[2rem] text-white shadow-2xl relative overflow-hidden">
+                <div class="relative z-10">
+                    <p class="text-[10px] font-bold text-emerald-500 mb-4 uppercase tracking-[0.2em] flex items-center gap-2">
+                        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span> Live Status
+                    </p>
+                    <div class="flex items-center gap-5">
+                        <div id="staff-status-color" class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shadow-lg transition-all-500">🖼️</div>
+                        <div class="flex-1 min-w-0">
+                            <p id="staff-status-promo" class="font-bold text-lg truncate tracking-tight">Loading...</p>
+                            <p id="staff-status-qr" class="text-[10px] font-black text-slate-500 mt-1 uppercase tracking-widest">QR: ---</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- หมวดหมู่ QR -->
+            <div class="space-y-4">
+                <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest px-2">💳 สลับช่องทางชำระเงิน</h3>
+                <div class="grid grid-cols-1 gap-3">
+                    <button id="btn-ibank" onclick="updateRemote({qrType: 'ibank', showThanks: false})" class="bg-white p-5 rounded-2xl border-2 border-transparent shadow-sm flex items-center justify-between active:scale-95 transition-all">
+                        <div class="flex items-center gap-4 text-left">
+                            <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center font-black italic text-xl">i</div>
+                            <div>
+                                <p class="font-bold text-slate-800">ธนาคารอิสลาม (iBank)</p>
+                                <p class="text-xs text-slate-500">สำหรับธุรกรรมมุสลิม</p>
+                            </div>
+                        </div>
+                    </button>
+                    <button id="btn-general" onclick="updateRemote({qrType: 'general', showThanks: false})" class="bg-white p-5 rounded-2xl border-2 border-transparent shadow-sm flex items-center justify-between active:scale-95 transition-all">
+                        <div class="flex items-center gap-4 text-left">
+                            <div class="w-12 h-12 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center font-black italic text-xl">P</div>
+                            <div>
+                                <p class="font-bold text-slate-800">พร้อมเพย์ / ทั่วไป</p>
+                                <p class="text-xs text-slate-500">ทุกธนาคาร (PromptPay)</p>
+                            </div>
+                        </div>
+                    </button>
+                    <div class="grid grid-cols-2 gap-3 mt-2">
+                        <button onclick="updateRemote({qrType: 'none', showThanks: true})" class="bg-emerald-600 hover:bg-emerald-700 text-white p-5 rounded-2xl font-bold active:scale-95 shadow-lg flex flex-col items-center gap-1">
+                            <span>✨ ขอบคุณ</span>
+                            <span class="text-[10px] opacity-60 font-normal">Thank You Mode</span>
+                        </button>
+                        <button onclick="updateRemote({qrType: 'none', showThanks: false})" class="bg-slate-200 text-slate-600 p-5 rounded-2xl font-bold active:scale-95 flex flex-col items-center gap-1">
+                            <span>🚫 ปิด QR</span>
+                            <span class="text-[10px] opacity-60 font-normal">Close All</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- หมวดหมู่ สไลด์ -->
+            <div class="space-y-4">
+                <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest px-2">🖼️ สลับรูปโปรโมชั่น</h3>
+                <div class="flex items-center justify-between bg-white p-6 rounded-[2rem] shadow-sm border border-slate-200">
+                    <button onclick="switchPromo(-1)" class="w-14 h-14 bg-slate-100 hover:bg-slate-200 rounded-full text-2xl active:scale-90 transition-all">‹</button>
+                    <div class="text-center">
+                        <span id="staff-promo-index" class="text-4xl font-black italic text-slate-800">1</span>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Active Slide</p>
+                    </div>
+                    <button onclick="switchPromo(1)" class="w-14 h-14 bg-slate-100 hover:bg-slate-200 rounded-full text-2xl active:scale-90 transition-all">›</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- ข้อมูลเบื้องต้น ---
+        const PROMOTIONS = [
+            { title: "EEL SPECIAL SET", desc: "ชุดครอบครัวอีล รวมเมนูเด็ด ลดทันที 10%", color: "bg-emerald-700" },
+            { title: "SPICY SOUP", desc: "ซุปหางวัวสูตรเข้มข้น รสเด็ดสะใจ", color: "bg-orange-600" },
+            { title: "COLLECT POINTS", desc: "ทานครบ 1,000.- รับสิทธิ์ลุ้นรับรางวัลพิเศษ", color: "bg-blue-700" }
+        ];
+
+        let db, auth, currentState = { qrType: 'none', currentPromo: 0, showThanks: false };
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'eel-v1';
+
+        // --- ระบบหลัก ---
+        async function init() {
+            try {
+                const config = JSON.parse(__firebase_config);
+                const app = initializeApp(config);
+                auth = getAuth(app);
+                db = getFirestore(app);
+
+                // Authentication (Rule 3)
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                document.getElementById('status-msg').innerText = "เชื่อมต่อสำเร็จ พร้อมใช้งาน";
+                setupSync();
+            } catch (err) {
+                console.error(err);
+                document.getElementById('status-msg').innerText = "ERROR: ไม่สามารถเชื่อมต่อฐานข้อมูลได้";
+                document.getElementById('status-msg').className = "text-red-500 font-bold text-xs uppercase";
+            }
+        }
+
+        // เชื่อมต่อข้อมูลแบบ Real-time (Rule 1 & 2)
+        function setupSync() {
+            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'displayState');
+            onSnapshot(docRef, (snap) => {
+                if (snap.exists()) {
+                    currentState = snap.data();
+                    refreshUI();
+                } else {
+                    // สร้างเอกสารเริ่มต้นถ้ายังไม่มี
+                    setDoc(docRef, currentState);
+                }
+            }, (err) => {
+                console.error("Snapshot error:", err);
+            });
+        }
+
+        // อัปเดตข้อมูล (พนักงานกด)
+        window.updateRemote = async (updates) => {
+            if (!auth.currentUser) return;
+            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'displayState');
+            try {
+                await updateDoc(docRef, updates);
+            } catch (err) {
+                console.error("Update fail:", err);
+            }
+        };
+
+        window.switchPromo = (dir) => {
+            const nextIdx = (currentState.currentPromo + dir + PROMOTIONS.length) % PROMOTIONS.length;
+            window.updateRemote({ currentPromo: nextIdx });
+        };
+
+        // แสดงผล UI
+        function refreshUI() {
+            // -- Update จอลูกค้า --
+            const qrArea = document.getElementById('qr-content');
+            const promo = PROMOTIONS[currentState.currentPromo];
+            
+            // ฝั่งซ้าย
+            document.getElementById('promo-section').className = `flex-[1.8] ${promo.color} flex flex-col items-center justify-center text-white p-20 transition-all-500 bg-gradient-animate relative overflow-hidden`;
+            document.getElementById('display-promo-title').innerText = promo.title;
+            document.getElementById('display-promo-desc').innerText = promo.desc;
+            
+            // จุด Dots
+            const dotHTML = PROMOTIONS.map((_, i) => 
+                `<div class="h-1.5 rounded-full transition-all duration-500 ${i === currentState.currentPromo ? 'w-12 bg-white' : 'w-2 bg-white/30'}"></div>`
+            ).join('');
+            document.getElementById('display-dots').innerHTML = dotHTML;
+
+            // ฝั่งขวา (QR)
+            if (currentState.showThanks) {
+                qrArea.innerHTML = `
+                    <div class="animate-in zoom-in duration-500 text-center space-y-8">
+                        <div class="w-32 h-32 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto shadow-inner text-6xl">🎉</div>
+                        <div class="space-y-2">
+                            <h3 class="text-5xl font-black text-slate-800 tracking-tighter">ขอบคุณค่ะ!</h3>
+                            <p class="text-2xl font-medium text-slate-400">ขอให้มีความสุขกับมื้ออาหารนะคะ</p>
+                        </div>
+                    </div>
+                `;
+            } else if (currentState.qrType === 'none') {
+                qrArea.innerHTML = `
+                    <div class="opacity-20 space-y-8 animate-in fade-in duration-1000">
+                        <div class="text-9xl">🛒</div>
+                        <h3 class="text-5xl font-black text-slate-300 uppercase tracking-widest">SCAN HERE</h3>
+                        <p class="text-xl text-slate-300 italic font-medium">กรุณาแจ้งพนักงานเพื่อรับช่องทางชำระเงิน</p>
+                    </div>
+                `;
+            } else {
+                const isIbank = currentState.qrType === 'ibank';
+                const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${isIbank ? 'IBANK_EEL_SHOP' : 'PROMPT_EEL_SHOP'}&color=${isIbank ? '065f46' : '1e40af'}`;
+                
+                qrArea.innerHTML = `
+                    <div class="animate-in zoom-in-95 duration-500 space-y-12">
+                        <div class="space-y-3">
+                            <h3 class="text-6xl font-black tracking-tighter uppercase text-slate-900 leading-none">SCAN NOW</h3>
+                            <p class="text-2xl font-bold uppercase tracking-widest ${isIbank ? 'text-emerald-600' : 'text-blue-600'}">
+                                ${isIbank ? 'ธนาคารอิสลาม (iBank)' : 'PromptPay / ทั่วไป'}
+                            </p>
+                        </div>
+                        <div class="relative inline-block bg-white p-6 rounded-[3rem] shadow-2xl border-2 border-slate-50">
+                            <img src="${qrUrl}" class="w-72 h-72 rounded-[2rem]" alt="Payment QR">
+                            <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-white px-4 py-1 rounded-full border shadow-sm text-[10px] font-bold text-slate-400 uppercase">Eel Restaurant</div>
+                        </div>
+                        <div class="space-y-4">
+                            <p class="bg-slate-50 px-8 py-3 rounded-full inline-block font-bold text-slate-800 border border-slate-100 shadow-sm">ชื่อบัญชี: <span class="text-emerald-700">ร้านอาหารอีล</span></p>
+                            <p class="text-slate-300 italic text-sm tracking-wide">ขอบคุณที่เลือกให้เราดูแลมื้อพิเศษของคุณค่ะ</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // -- Update จอพนักงาน --
+            document.getElementById('staff-status-promo').innerText = promo.title;
+            document.getElementById('staff-status-qr').innerText = `QR: ${currentState.qrType.toUpperCase()}${currentState.showThanks ? ' (THANK YOU MODE)' : ''}`;
+            document.getElementById('staff-status-color').className = `w-16 h-16 rounded-2xl flex items-center justify-center text-white shadow-lg ${promo.color}`;
+            document.getElementById('staff-status-color').innerText = isNaN(promo.title.charAt(0)) ? "🖼️" : promo.title.charAt(0);
+            document.getElementById('staff-promo-index').innerText = currentState.currentPromo + 1;
+            document.getElementById('device-id').innerText = auth.currentUser?.uid.slice(0, 6);
+
+            // Button active states
+            const btnI = document.getElementById('btn-ibank');
+            const btnG = document.getElementById('btn-general');
+            
+            btnI.className = `w-full bg-white p-5 rounded-2xl border-2 shadow-sm flex items-center justify-between active:scale-95 transition-all ${currentState.qrType === 'ibank' ? 'border-emerald-500 ring-4 ring-emerald-500/10' : 'border-transparent'}`;
+            btnG.className = `w-full bg-white p-5 rounded-2xl border-2 shadow-sm flex items-center justify-between active:scale-95 transition-all ${currentState.qrType === 'general' ? 'border-blue-500 ring-4 ring-blue-500/10' : 'border-transparent'}`;
+        }
+
+        // เลือกโหมด
+        window.selectMode = (mode) => {
+            document.getElementById('mode-selector').classList.add('hidden');
+            if (mode === 'customer') {
+                document.getElementById('view-customer').classList.remove('hidden');
+            } else {
+                document.getElementById('view-staff').classList.remove('hidden');
+            }
+        };
+
+        init();
+    </script>
+</body>
+</html>
