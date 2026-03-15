@@ -3,161 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eel Restaurant - Smart Display (Google Sheets)</title>
+    <title>Thonwithi - Smart Display (ธนวิถี)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Kanit', sans-serif; overflow-x: hidden; }
-        .bg-gradient-animate {
-            background: linear-gradient(-45deg, #065f46, #047857, #064e3b, #065f46);
+        /* ปรับพื้นหลังให้เข้ากับโลโก้โทนน้ำตาล */
+        .bg-thonwithi { background-color: #3d2b1f; }
+        .text-gold { color: #d4af37; }
+        .bg-gold { background-color: #d4af37; }
+        .border-gold { border-color: #d4af37; }
+        
+        .bg-gradient-thonwithi {
+            background: linear-gradient(-45deg, #3d2b1f, #5c4033, #2a1b12, #3d2b1f);
             background-size: 400% 400%;
             animation: gradient 15s ease infinite;
         }
         @keyframes gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         .transition-all-500 { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .promo-img { object-fit: cover; width: 100%; height: 100%; }
     </style>
 </head>
-<body class="bg-slate-900 text-white min-h-screen">
+<body class="bg-[#1a110a] text-white min-h-screen">
 
     <!-- ส่วนเลือกโหมดการใช้งาน -->
-    <div id="mode-selector" class="fixed inset-0 z-50 bg-slate-900 flex items-center justify-center p-6 text-center">
+    <div id="mode-selector" class="fixed inset-0 z-50 bg-[#1a110a] flex items-center justify-center p-6 text-center">
         <div class="max-w-md w-full space-y-10">
-            <h1 class="text-6xl font-black text-emerald-400 italic tracking-tighter uppercase drop-shadow-lg">EEL RESTAURANT</h1>
+            <div class="flex flex-col items-center gap-4">
+                <img src="logo.jpg" alt="Thonwithi Logo" class="w-32 h-32 rounded-full border-2 border-gold shadow-2xl">
+                <h1 class="text-5xl font-black text-gold italic tracking-tighter uppercase">THONWITHI</h1>
+                <p class="text-stone-400 font-medium uppercase tracking-[0.3em] text-xs">ธนวิถี - Smart Display System</p>
+            </div>
+            
             <div class="grid grid-cols-1 gap-5">
-                <button onclick="selectMode('customer')" class="flex flex-col items-center p-8 bg-slate-800 border-2 border-slate-700 rounded-[2.5rem] hover:border-emerald-500 transition-all group">
+                <button onclick="selectMode('customer')" class="flex flex-col items-center p-8 bg-[#2a1b12] border-2 border-stone-800 rounded-[2.5rem] hover:border-gold transition-all group">
                     <span class="text-5xl mb-3 group-hover:scale-110 transition-transform">📺</span>
                     <span class="text-2xl font-bold">จอสำหรับลูกค้า</span>
-                    <span class="text-[10px] text-slate-500 mt-1 uppercase tracking-widest font-black">Customer Display Mode</span>
+                    <span class="text-[10px] text-stone-500 mt-1 uppercase tracking-widest font-black">Customer Display Mode</span>
                 </button>
-                <button onclick="selectMode('staff')" class="flex flex-col items-center p-8 bg-slate-800 border-2 border-slate-700 rounded-[2.5rem] hover:border-blue-500 transition-all group">
+                <button onclick="selectMode('staff')" class="flex flex-col items-center p-8 bg-[#2a1b12] border-2 border-stone-800 rounded-[2.5rem] hover:border-gold transition-all group">
                     <span class="text-5xl mb-3 group-hover:scale-110 transition-transform">📱</span>
                     <span class="text-2xl font-bold">จอสำหรับพนักงาน</span>
-                    <span class="text-[10px] text-slate-500 mt-1 uppercase tracking-widest font-black">Staff Controller Mode</span>
+                    <span class="text-[10px] text-stone-500 mt-1 uppercase tracking-widest font-black">Staff Controller Mode</span>
                 </button>
             </div>
-            <div class="space-y-1">
-                <p class="text-[10px] text-emerald-500 font-black uppercase tracking-widest">System Status: Ready (GAS)</p>
-                <p class="text-[10px] text-slate-600 uppercase tracking-widest">ใช้ Google Sheets เป็นตัวควบคุม</p>
-            </div>
+            <p class="text-[10px] text-stone-600 uppercase tracking-widest">Connected via Google Sheets</p>
         </div>
     </div>
 
     <!-- หน้าจอลูกค้า (Customer View) -->
     <div id="view-customer" class="hidden h-screen w-screen flex flex-row overflow-hidden bg-white">
         <!-- ฝั่งซ้าย: โปรโมชั่น -->
-        <div id="promo-section" class="flex-[1.8] relative flex flex-col items-center justify-center p-20 transition-all-500 bg-gradient-animate overflow-hidden text-white">
+        <div id="promo-section" class="flex-[1.8] relative flex flex-col items-center justify-center p-20 transition-all-500 bg-gradient-thonwithi overflow-hidden text-white">
             <div class="absolute top-12 left-12 flex items-center gap-4">
-                <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-slate-900 font-black text-3xl italic shadow-2xl">E</div>
+                <img src="logo.jpg" alt="Logo" class="w-16 h-16 rounded-full border border-white/20 shadow-xl">
                 <div class="text-left">
-                    <h2 class="text-3xl font-black uppercase tracking-tighter leading-none">Eel Restaurant</h2>
-                    <p class="text-xs font-bold tracking-[0.3em] opacity-70 uppercase">Authentic Taste</p>
+                    <h2 class="text-3xl font-black uppercase tracking-tighter leading-none text-gold">Thonwithi</h2>
+                    <p class="text-xs font-bold tracking-[0.3em] opacity-70 uppercase">ธนวิถี</p>
                 </div>
             </div>
             
             <div class="text-center space-y-10 z-10">
-                <div class="w-[550px] h-[380px] bg-black/20 backdrop-blur-md rounded-[3rem] border-4 border-white/30 flex items-center justify-center shadow-2xl overflow-hidden">
-                    <span id="promo-icon" class="text-9xl">🥘</span>
+                <div class="w-[600px] h-[400px] bg-black/30 backdrop-blur-md rounded-[3rem] border-4 border-white/10 flex items-center justify-center shadow-2xl overflow-hidden">
+                    <!-- แสดงรูปภาพโปรโมชั่น -->
+                    <img id="display-promo-img" src="" class="promo-img hidden" alt="Promotion">
+                    <span id="promo-placeholder-icon" class="text-9xl opacity-20">🥘</span>
                 </div>
                 <div class="space-y-4">
-                    <h3 id="display-promo-title" class="text-7xl font-extrabold uppercase tracking-tighter drop-shadow-lg">---</h3>
-                    <p id="display-promo-desc" class="text-3xl font-medium opacity-90 max-w-xl mx-auto">---</p>
+                    <h3 id="display-promo-title" class="text-7xl font-extrabold uppercase tracking-tighter text-white drop-shadow-lg leading-tight">---</h3>
+                    <p id="display-promo-desc" class="text-3xl font-medium opacity-90 max-w-xl mx-auto text-stone-200">---</p>
                 </div>
             </div>
         </div>
 
         <!-- ฝั่งขวา: QR Payment -->
-        <div class="flex-1 bg-white flex flex-col items-center justify-center p-12 text-slate-900 border-l-4 border-slate-50">
+        <div class="flex-1 bg-white flex flex-col items-center justify-center p-12 text-slate-900 border-l-4 border-stone-100">
             <div id="qr-content" class="w-full text-center space-y-12"></div>
         </div>
     </div>
 
     <!-- หน้าจอพนักงาน (Staff View) -->
-    <div id="view-staff" class="hidden min-h-screen bg-slate-50 text-slate-900 p-4 pb-12 overflow-y-auto">
+    <div id="view-staff" class="hidden min-h-screen bg-stone-50 text-slate-900 p-4 pb-12 overflow-y-auto">
         <div class="max-w-md mx-auto space-y-8">
-            <header class="flex justify-between items-center py-4 bg-white px-4 rounded-3xl shadow-sm border border-slate-100">
+            <header class="flex justify-between items-center py-4 bg-white px-4 rounded-3xl shadow-sm border border-stone-200">
                 <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center text-white font-bold italic">E</div>
-                    <h2 class="text-xl font-black text-slate-800 uppercase italic">Eel Control</h2>
+                    <img src="logo.jpg" alt="Logo" class="w-10 h-10 rounded-full border border-stone-200">
+                    <h2 class="text-xl font-black text-[#3d2b1f] uppercase italic">Thonwithi Control</h2>
                 </div>
-                <button onclick="location.reload()" class="p-2 bg-slate-100 rounded-full text-lg">🔄</button>
+                <button onclick="location.reload()" class="p-2 bg-stone-100 rounded-full text-lg">🔄</button>
             </header>
 
             <!-- Live Status -->
-            <div class="bg-slate-900 p-6 rounded-[2.5rem] text-white shadow-xl relative overflow-hidden">
-                <p class="text-[10px] font-bold text-emerald-500 mb-4 uppercase tracking-widest flex items-center gap-2">
-                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span> Live Status
+            <div class="bg-[#3d2b1f] p-6 rounded-[2.5rem] text-white shadow-xl relative overflow-hidden">
+                <p class="text-[10px] font-bold text-gold mb-4 uppercase tracking-widest flex items-center gap-2">
+                    <span class="w-2 h-2 bg-gold rounded-full animate-ping"></span> Live Displaying
                 </p>
                 <div class="flex items-center gap-4">
-                    <div id="staff-status-ico" class="w-14 h-14 bg-slate-800 rounded-2xl flex items-center justify-center text-2xl">🖼️</div>
+                    <div id="staff-status-ico" class="w-14 h-14 bg-stone-800 rounded-2xl flex items-center justify-center text-2xl overflow-hidden">
+                        <img id="staff-status-img-thumb" src="" class="hidden promo-img" alt="Thumb">
+                        <span id="staff-status-icon-fallback">🖼️</span>
+                    </div>
                     <div class="flex-1">
-                        <p id="staff-status-title" class="font-bold text-lg truncate">เชื่อมต่อ...</p>
-                        <p id="staff-status-qr" class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">QR: ---</p>
+                        <p id="staff-status-title" class="font-bold text-lg truncate">เชื่อมต่อระบบ...</p>
+                        <p id="staff-status-qr" class="text-[10px] text-stone-400 font-bold uppercase tracking-widest">QR: ---</p>
                     </div>
                 </div>
             </div>
 
             <!-- Controls -->
             <div class="space-y-4">
-                <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest px-2 italic">💳 สลับ QR Code ลูกค้า</h3>
+                <h3 class="text-xs font-black text-stone-400 uppercase tracking-widest px-2 italic">💳 สลับ QR ให้ลูกค้าสแกน</h3>
                 <div class="grid grid-cols-1 gap-3">
-                    <button id="btn-qr-ibank" onclick="updateRemote('ibank', currentState.currentPromo, false)" class="bg-white p-5 rounded-2xl shadow-sm border-2 border-transparent active:scale-95 transition-all text-left flex justify-between items-center">
+                    <button id="btn-qr-ibank" onclick="updateRemote('ibank', currentState.currentPromo, false)" class="bg-white p-5 rounded-3xl shadow-sm border-2 border-transparent active:scale-95 transition-all text-left flex justify-between items-center">
                         <div class="flex items-center gap-4">
                             <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center font-black italic text-xl">i</div>
                             <div>
                                 <p class="font-bold text-slate-800 text-lg">ธนาคารอิสลาม</p>
-                                <p class="text-xs text-slate-500">ไฟล์: qr01.jpg</p>
+                                <p class="text-xs text-stone-400">ไฟล์: qr01.jpg</p>
                             </div>
                         </div>
                     </button>
-                    <button id="btn-qr-general" onclick="updateRemote('general', currentState.currentPromo, false)" class="bg-white p-5 rounded-2xl shadow-sm border-2 border-transparent active:scale-95 transition-all text-left flex justify-between items-center">
+                    <button id="btn-qr-general" onclick="updateRemote('general', currentState.currentPromo, false)" class="bg-white p-5 rounded-3xl shadow-sm border-2 border-transparent active:scale-95 transition-all text-left flex justify-between items-center">
                         <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center font-black italic text-xl">P</div>
+                            <div class="w-12 h-12 bg-stone-100 text-[#3d2b1f] rounded-full flex items-center justify-center font-black italic text-xl">P</div>
                             <div>
                                 <p class="font-bold text-slate-800 text-lg">พร้อมเพย์ / ทั่วไป</p>
-                                <p class="text-xs text-slate-500">ไฟล์: qr02.jpg</p>
+                                <p class="text-xs text-stone-400">ไฟล์: qr02.jpg</p>
                             </div>
                         </div>
                     </button>
                     <div class="grid grid-cols-2 gap-3 mt-2">
-                        <button onclick="updateRemote('none', currentState.currentPromo, true)" class="bg-emerald-600 text-white p-5 rounded-2xl font-bold active:scale-95 shadow-lg">✨ แจ้งขอบคุณ</button>
-                        <button onclick="updateRemote('none', currentState.currentPromo, false)" class="bg-slate-200 text-slate-600 p-5 rounded-2xl font-bold active:scale-95">🚫 ปิดหน้า QR</button>
+                        <button onclick="updateRemote('none', currentState.currentPromo, true)" class="bg-[#3d2b1f] text-gold p-5 rounded-3xl font-bold active:scale-95 shadow-lg">✨ ขอบคุณลูกค้า</button>
+                        <button onclick="updateRemote('none', currentState.currentPromo, false)" class="bg-stone-200 text-stone-600 p-5 rounded-3xl font-bold active:scale-95">🚫 ปิด QR</button>
                     </div>
                 </div>
             </div>
 
             <!-- Slide Control -->
             <div class="space-y-4">
-                <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest px-2 italic">🖼️ สลับโปรโมชั่น</h3>
-                <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 flex justify-between items-center">
-                    <button onclick="switchPromo(-1)" class="w-14 h-14 bg-slate-100 hover:bg-slate-200 rounded-full text-2xl font-bold active:scale-90 transition-all flex items-center justify-center">‹</button>
+                <h3 class="text-xs font-black text-stone-400 uppercase tracking-widest px-2 italic">🖼️ เปลี่ยนรูปโปรโมชั่น</h3>
+                <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-stone-100 flex justify-between items-center">
+                    <button onclick="switchPromo(-1)" class="w-14 h-14 bg-stone-100 hover:bg-stone-200 rounded-full text-2xl font-bold active:scale-90 transition-all flex items-center justify-center text-stone-800">‹</button>
                     <div class="text-center">
-                        <p class="text-4xl font-black text-slate-800 italic" id="staff-idx">1</p>
-                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Active Slide</p>
+                        <p class="text-4xl font-black text-[#3d2b1f] italic" id="staff-idx">1</p>
+                        <p class="text-[10px] text-stone-400 font-bold uppercase tracking-widest">Active Slide</p>
                     </div>
-                    <button onclick="switchPromo(1)" class="w-14 h-14 bg-slate-100 hover:bg-slate-200 rounded-full text-2xl font-bold active:scale-90 transition-all flex items-center justify-center">›</button>
+                    <button onclick="switchPromo(1)" class="w-14 h-14 bg-stone-100 hover:bg-stone-200 rounded-full text-2xl font-bold active:scale-90 transition-all flex items-center justify-center text-stone-800">›</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // ==========================================
-        // *** GOOGLE APPS SCRIPT CONFIGURATION ***
-        // ==========================================
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyiQETy4TKrnGQXd7BVqWTE0EyZBfKSu5FuXpAtRKWaoIPjva468G6DWFXZzkKp6VKJ/exec";
 
         let currentState = { qrType: 'none', currentPromo: 0, showThanks: false };
+
+        // ==========================================
+        // *** ตั้งค่าข้อมูลโปรโมชั่น (ใส่ชื่อไฟล์รูปใน GitHub ได้เลย) ***
+        // ==========================================
         const PROMOTIONS = [
-            { title: "EEL SPECIAL SET", desc: "ชุดครอบครัวอีล รวมเมนูเด็ด ลดทันที 10%", color: "bg-emerald-700", icon: "🍱" },
-            { title: "SPICY SOUP", desc: "ซุปหางวัวสูตรเข้มข้น รสเด็ดสะใจ", color: "bg-orange-600", icon: "🥣" },
-            { title: "COLLECT POINTS", desc: "ทานครบ 1,000.- รับสิทธิ์ลุ้นรางวัลพิเศษ", color: "bg-blue-700", icon: "🏆" }
+            { 
+                title: "THONWITHI SPECIAL", 
+                desc: "สัมผัสรสชาติอันเป็นเอกลักษณ์แบบธนวิถี", 
+                color: "bg-[#3d2b1f]", 
+                img: "p1.jpg", // ใส่ชื่อไฟล์รูปที่อัพลง GitHub
+                icon: "🍱" 
+            },
+            { 
+                title: "SIGNATURE MENU", 
+                desc: "เมนูเด็ดที่คุณไม่ควรพลาด", 
+                color: "bg-[#5c4033]", 
+                img: "p2.jpg", 
+                icon: "🍲" 
+            },
+            { 
+                title: "REWARD PROGRAM", 
+                desc: "ทานครบ 1,000.- รับสิทธิพิเศษมากมาย", 
+                color: "bg-[#2a1b12]", 
+                img: "p3.jpg", 
+                icon: "⭐" 
+            }
         ];
 
         function selectMode(mode) {
             document.getElementById('mode-selector').classList.add('hidden');
             if (mode === 'customer') {
                 document.getElementById('view-customer').classList.remove('hidden');
-                // จอลูกค้าจะดึงข้อมูลใหม่ทุกๆ 2 วินาที (Real-time polling)
                 setInterval(fetchState, 2000);
             } else {
                 document.getElementById('view-staff').classList.remove('hidden');
@@ -171,23 +203,14 @@
                 const data = await response.json();
                 currentState = data;
                 refreshUI();
-            } catch (e) {
-                console.error("Connection lost. Retrying...");
-            }
+            } catch (e) { console.error("Reconnecting..."); }
         }
 
         async function updateRemote(qrType, promoIdx, showThanks) {
-            // อัปเดตฝั่งพนักงานทันที (Optimistic UI)
             currentState = { qrType, currentPromo: promoIdx, showThanks };
             refreshUI();
-            
-            // ส่งข้อมูลไปบันทึกใน Google Sheets
             const url = `${SCRIPT_URL}?action=update&qrType=${qrType}&currentPromo=${promoIdx}&showThanks=${showThanks}`;
-            try {
-                await fetch(url);
-            } catch (e) {
-                console.error("Failed to update Sheets");
-            }
+            fetch(url);
         }
 
         function switchPromo(dir) {
@@ -201,30 +224,41 @@
             // -- อัปเดตหน้าจอลูกค้า --
             const customerTitle = document.getElementById('display-promo-title');
             if (customerTitle) {
-                document.getElementById('promo-section').className = `flex-[1.8] relative flex flex-col items-center justify-center p-20 transition-all-500 ${promo.color} text-white overflow-hidden bg-gradient-animate`;
+                document.getElementById('promo-section').className = `flex-[1.8] relative flex flex-col items-center justify-center p-20 transition-all-500 ${promo.color} text-white overflow-hidden bg-gradient-thonwithi`;
                 customerTitle.innerText = promo.title;
                 document.getElementById('display-promo-desc').innerText = promo.desc;
-                document.getElementById('promo-icon').innerText = promo.icon;
+                
+                const dImg = document.getElementById('display-promo-img');
+                const dIcon = document.getElementById('promo-placeholder-icon');
+                if (promo.img) {
+                    dImg.src = promo.img;
+                    dImg.classList.remove('hidden');
+                    dIcon.classList.add('hidden');
+                } else {
+                    dImg.classList.add('hidden');
+                    dIcon.classList.remove('hidden');
+                    dIcon.innerText = promo.icon;
+                }
                 
                 const qrArea = document.getElementById('qr-content');
                 if (currentState.showThanks) {
-                    qrArea.innerHTML = `<div class="animate-in zoom-in duration-500 text-center space-y-10"><div class="text-9xl">✨</div><h3 class="text-6xl font-black text-slate-900 uppercase leading-none tracking-tighter">THANK YOU!</h3><p class="text-2xl font-medium text-slate-400">ขอให้มีความสุขกับมื้ออาหารนะคะ</p></div>`;
+                    qrArea.innerHTML = `<div class="animate-in zoom-in duration-500 text-center space-y-10"><div class="text-9xl">✨</div><h3 class="text-6xl font-black text-[#3d2b1f] uppercase leading-none tracking-tighter">THANK YOU!</h3><p class="text-2xl font-medium text-stone-400">ขอบคุณที่ไว้วางใจธนวิถีค่ะ</p></div>`;
                 } else if (currentState.qrType === 'none') {
-                    qrArea.innerHTML = `<div class="opacity-10 space-y-8 animate-in fade-in duration-1000 text-slate-900"><div class="text-9xl">🛒</div><h3 class="text-5xl font-black uppercase leading-none tracking-tighter">SCAN HERE</h3><p class="text-xl font-medium italic text-slate-400">กรุณาแจ้งพนักงานเพื่อรับ QR</p></div>`;
+                    qrArea.innerHTML = `<div class="opacity-10 space-y-8 animate-in fade-in duration-1000 text-stone-900"><div class="text-9xl">🛒</div><h3 class="text-5xl font-black uppercase leading-none tracking-tighter">SCAN HERE</h3><p class="text-xl font-medium italic text-stone-400">กรุณาแจ้งพนักงานเพื่อรับ QR</p></div>`;
                 } else {
                     const isIbank = currentState.qrType === 'ibank';
                     const qrImg = isIbank ? 'qr01.jpg' : 'qr02.jpg';
                     qrArea.innerHTML = `
-                        <div class="animate-in zoom-in-95 duration-500 space-y-12 text-slate-900">
+                        <div class="animate-in zoom-in-95 duration-500 space-y-12 text-[#3d2b1f]">
                             <div class="space-y-4">
                                 <h3 class="text-6xl font-black uppercase leading-none tracking-tighter">SCAN NOW</h3>
-                                <p class="text-2xl font-bold uppercase tracking-widest ${isIbank ? 'text-emerald-600' : 'text-blue-600'}">${isIbank ? 'ธนาคารอิสลาม (iBank)' : 'พร้อมเพย์ / ทั่วไป'}</p>
+                                <p class="text-2xl font-bold uppercase tracking-widest ${isIbank ? 'text-emerald-600' : 'text-stone-500'}">${isIbank ? 'ธนาคารอิสลาม (iBank)' : 'พร้อมเพย์ / ทั่วไป'}</p>
                             </div>
-                            <div class="relative inline-block bg-white p-6 rounded-[3rem] shadow-2xl border-4 border-slate-50 overflow-hidden">
-                                <img src="${qrImg}" class="w-80 h-80 object-contain rounded-[1.5rem]" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=MissingImage&color=ff0000'">
+                            <div class="relative inline-block bg-white p-6 rounded-[3.5rem] shadow-2xl border-4 border-stone-50 overflow-hidden">
+                                <img src="${qrImg}" class="w-80 h-80 object-contain rounded-[1.5rem]" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=ErrorPath&color=3d2b1f'">
                             </div>
                             <div class="space-y-4">
-                                <p class="bg-slate-50 px-8 py-3 rounded-full inline-block font-bold text-slate-700 border shadow-sm">ชื่อบัญชี: <span class="${isIbank ? 'text-emerald-700' : 'text-blue-700'}">ร้านอาหารอีล</span></p>
+                                <p class="bg-stone-50 px-8 py-3 rounded-full inline-block font-bold text-[#3d2b1f] border border-stone-100 shadow-sm uppercase tracking-wider">Thonwithi Store</p>
                             </div>
                         </div>`;
                 }
@@ -236,15 +270,25 @@
                 staffTitle.innerText = promo.title;
                 document.getElementById('staff-status-qr').innerText = `QR: ${currentState.qrType.toUpperCase()}`;
                 document.getElementById('staff-idx').innerText = currentState.currentPromo + 1;
-                document.getElementById('staff-status-ico').innerText = promo.icon;
                 
-                // Highlight Buttons
+                const sImg = document.getElementById('staff-status-img-thumb');
+                const sIco = document.getElementById('staff-status-icon-fallback');
+                if (promo.img) {
+                    sImg.src = promo.img;
+                    sImg.classList.remove('hidden');
+                    sIco.classList.add('hidden');
+                } else {
+                    sImg.classList.add('hidden');
+                    sIco.classList.remove('hidden');
+                    sIco.innerText = promo.icon;
+                }
+                
                 const btnI = document.getElementById('btn-qr-ibank');
                 const btnG = document.getElementById('btn-qr-general');
                 btnI.style.borderColor = currentState.qrType === 'ibank' ? '#10b981' : 'transparent';
-                btnG.style.borderColor = currentState.qrType === 'general' ? '#3b82f6' : 'transparent';
+                btnG.style.borderColor = currentState.qrType === 'general' ? '#d4af37' : 'transparent';
                 btnI.style.background = currentState.qrType === 'ibank' ? '#f0fdf4' : 'white';
-                btnG.style.background = currentState.qrType === 'general' ? '#eff6ff' : 'white';
+                btnG.style.background = currentState.qrType === 'general' ? '#fffcf0' : 'white';
             }
         }
     </script>
